@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: html-demo-deployment
+  labels:
+    app: html-demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: html-demo
+  template:
+    metadata:
+      labels:
+        app: html-demo
+    spec:
+      containers:
+      - name: html-demo-container
+        # This matches the DOCKER_IMAGE in your Jenkinsfile
+        image: chidhambaramb/html-demo:latest
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: html-demo-service
+spec:
+  selector:
+    app: html-demo
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      # Change to LoadBalancer if using Cloud (AWS/Azure/GCP)
+      # Keep as NodePort for local/Minikube setups
+  type: NodePort 
